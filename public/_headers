@@ -1,0 +1,14 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://*.sanity.io https://*.sanity.studio; style-src 'self' 'unsafe-inline' https://*.sanity.io https://*.sanity.studio; img-src 'self' data: https://*.sanity.io https://cdn.sanity.io https://i.ytimg.com; font-src 'self'; connect-src 'self' https://*.sanity.io https://*.sanity.studio https://api.cloudflare.com; frame-src https://www.youtube.com https://youtube.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
+
+# Prevent pages.dev URLs from being indexed
+https://*.pages.dev/*
+  X-Robots-Tag: noindex
+
+# Cache static assets
+/assets/*
+  Cache-Control: public, max-age=31556952, immutable 

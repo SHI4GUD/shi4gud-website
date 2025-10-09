@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* Hide arrows from number inputs - Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide arrows from number inputs - Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.floating-element {
+  position: absolute;
+  animation: float 6s ease-in-out infinite;
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+.floating-1 {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-2 {
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.floating-3 {
+    bottom: 25%;
+    left: 10%;
+    animation-delay: 4s;
+}
+
+.floating-4 {
+    top: 15%;
+    right: 10%;
+    animation-delay: 5s;
+}
+
+.floating-5 {
+    bottom: 50%;
+    left: 25%;
+    animation-delay: 1s;
+} 
