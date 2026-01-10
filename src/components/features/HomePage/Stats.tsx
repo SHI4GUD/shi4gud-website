@@ -26,7 +26,7 @@ const Stats: React.FC<StatsProps> = ({ data }) => {
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting && statsRef.current) {
-            const statItems = statsRef.current.querySelectorAll('.stat-value');
+            const statItems = statsRef.current.querySelectorAll('.stat-value:not(.stat-date)');
             statItems.forEach((item) => {
               const element = item as HTMLElement;
               const endValue = parseInt(element.getAttribute('data-end-value') || '0', 10);
@@ -61,14 +61,32 @@ const Stats: React.FC<StatsProps> = ({ data }) => {
       <section className="max-w-[1200px] mx-auto px-5">
         <div className="bg-white/5 rounded-[20px] my-[60px] border border-white/10 px-5 py-[30px] md:p-10" id="stats" ref={statsRef}>
           <div className="flex flex-wrap justify-center gap-10 text-center">
-            {statItems.map((item, index) => (
-              <div className="w-[200px]" key={index}>
-                <h3 className="stat-value text-4xl font-bold text-[#ff6b6b] mb-2" data-end-value={parseInt(item.value.replace(/[^0-9]/g, '')) || 0} data-prefix={item.value.startsWith('$') ? '$' : ''} data-suffix={item.value.endsWith('%') ? '%' : ''}>
-                  0
-                </h3>
-                <p className="opacity-80 text-lg">{item.label}</p>
-              </div>
-            ))}
+            {statItems.map((item, index) => {
+              const isDate = item.type === 'date' || (item.date && !item.value);
+              const displayValue = isDate && item.date 
+                ? item.date // Display exactly as entered (YYYY-MM-DD format)
+                : item.value || '0';
+              
+              return (
+                <div className="w-[200px]" key={index}>
+                  {isDate ? (
+                    <h3 className="stat-value stat-date text-4xl font-bold text-[#ff6b6b] mb-2">
+                      {displayValue}
+                    </h3>
+                  ) : (
+                    <h3 
+                      className="stat-value text-4xl font-bold text-[#ff6b6b] mb-2" 
+                      data-end-value={parseInt((item.value || '0').replace(/[^0-9]/g, '')) || 0} 
+                      data-prefix={(item.value || '').startsWith('$') ? '$' : ''} 
+                      data-suffix={(item.value || '').endsWith('%') ? '%' : ''}
+                    >
+                      0
+                    </h3>
+                  )}
+                  <p className="opacity-80 text-lg">{item.label}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

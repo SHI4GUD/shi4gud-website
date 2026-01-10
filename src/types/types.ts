@@ -12,7 +12,9 @@ export interface HeroData {
 }
 
 export interface Stat {
-  value: string;
+  type?: 'number' | 'date';
+  value?: string;
+  date?: string;
   label: string;
 }
 
