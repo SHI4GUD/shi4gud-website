@@ -56,7 +56,7 @@ const Stats: React.FC<StatsProps> = ({ data }) => {
   
     // Default to an empty array to prevent map function from breaking
     const statItems = data?.items || [];
-  
+
     return (
       <section className="max-w-[1200px] mx-auto px-5">
         <div className="bg-white/5 rounded-[20px] my-[60px] border border-white/10 px-5 py-[30px] md:p-10" id="stats" ref={statsRef}>
@@ -64,7 +64,11 @@ const Stats: React.FC<StatsProps> = ({ data }) => {
             {statItems.map((item, index) => {
               const isDate = item.type === 'date' || (item.date && !item.value);
               const displayValue = isDate && item.date 
-                ? item.date // Display exactly as entered (YYYY-MM-DD format)
+                ? (() => {
+                    // Convert from YYYY-MM-DD (Sanity format) to MM/DD/YYYY
+                    const [year, month, day] = item.date.split('-');
+                    return `${month}/${day}/${year}`;
+                  })()
                 : item.value || '0';
               
               return (
