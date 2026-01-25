@@ -5,6 +5,20 @@ interface StatsProps {
   data: StatsData;
 }
 
+// Format number with K, M, B, T suffixes
+const formatNumber = (num: number): string => {
+  if (num >= 1_000_000_000_000) {
+    return (num / 1_000_000_000_000).toFixed(2).replace(/\.?0+$/, '') + 'T';
+  } else if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(2).replace(/\.?0+$/, '') + 'B';
+  } else if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+  } else if (num >= 1_000) {
+    return (num / 1_000).toFixed(2).replace(/\.?0+$/, '') + 'K';
+  }
+  return num.toLocaleString();
+};
+
 const Stats: React.FC<StatsProps> = ({ data }) => {
     const statsRef = useRef<HTMLDivElement>(null);
   
@@ -15,7 +29,7 @@ const Stats: React.FC<StatsProps> = ({ data }) => {
           if (!startTimestamp) startTimestamp = timestamp;
           const progress = Math.min((timestamp - startTimestamp) / duration, 1);
           const value = progress * (end - start) + start;
-          element.innerHTML = prefix + Math.floor(value).toLocaleString() + suffix;
+          element.innerHTML = prefix + formatNumber(Math.floor(value)) + suffix;
           if (progress < 1) {
             window.requestAnimationFrame(step);
           }

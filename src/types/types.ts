@@ -85,4 +85,38 @@ export interface HowToData {
   title?: string;
   subtitle?: string;
   contentBoxes?: ContentBox[];
-} 
+}
+
+// Burn Tracker Types
+export interface BurnBank {
+  id: string;
+  name: string;
+  symbol: string;
+  contractAddress: `0x${string}`;
+  burnAddresses: `0x${string}`[];
+  logo?: string;
+  decimals: number;
+  totalSupply: number;
+  chainId: number;
+}
+
+export interface BurnDataPoint {
+  date: string;
+  totalBurned: number;
+}
+
+export interface BurnTransaction {
+  txHash: string;
+  date: string;
+  amount: number;
+  from?: string;
+  fromEns?: string;
+}
+
+export interface BurnStats {
+  totalBurned: number;
+  totalSupply: number;
+  burnedToday: number;
+  burned7d: number;
+  burnRateChange?: number; // percentage change
+}

@@ -6,6 +6,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const FaqPage = React.lazy(() => import('./pages/FaqPage'));
 const HowToPage = React.lazy(() => import('./pages/HowToPage'));
+const BurnTrackerPage = React.lazy(() => import('./pages/BurnTrackerPage'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
 const App: React.FC = () => {
@@ -16,6 +17,7 @@ const App: React.FC = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/how-to" element={<HowToPage />} />
+          <Route path="/burn" element={<BurnTrackerPage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

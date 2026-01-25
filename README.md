@@ -15,6 +15,7 @@
   <a href="https://react.dev" target="_blank"><img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React"></a>
   <a href="https://www.typescriptlang.org" target="_blank"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript"></a>
   <a href="https://tailwindcss.com" target="_blank"><img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white" alt="Tailwind CSS"></a>
+  <a href="https://viem.sh" target="_blank"><img src="https://img.shields.io/badge/Viem-1C1C1C?style=flat&logo=ethereum&logoColor=white" alt="Viem"></a>
   <a href="https://www.sanity.io" target="_blank"><img src="https://img.shields.io/badge/Sanity-F03E2F?style=flat&logo=sanity&logoColor=white" alt="Sanity"></a>
 </p>
 
@@ -58,6 +59,7 @@ The **SHI4GUD Website** serves as the primary web presence for the SHI4GUD ecosy
 *   🎯 **Route-Based Code-Splitting**: Lazy-loaded routes improve initial page load times.
 *   🔄 **Efficient Data Fetching**: TanStack Query handles data fetching, caching, and state management.
 *   🛡️ **Type-Safe**: Written in TypeScript for improved code quality and maintainability.
+*   🔥 **Burn Tracker**: Real-time token burn analytics with historical charts, transaction history, and USD values.
 
 ### Built With
 
@@ -68,6 +70,8 @@ This project leverages modern web development tools and a headless CMS architect
 *   **Styling**: [Tailwind CSS](https://tailwindcss.com/) (v4+)
 *   **Routing**: [React Router DOM](https://reactrouter.com/) (v7.6+)
 *   **State Management**: [TanStack React Query](https://tanstack.com/query/latest) (v5.75+)
+*   **Blockchain**: [Viem](https://viem.sh/) (v2+) for Ethereum RPC interactions
+*   **Charts**: [Recharts](https://recharts.org/) for data visualization
 *   **Headless CMS**: [Sanity](https://www.sanity.io/) (v3+)
 *   **UI Components**: [Lucide React](https://lucide.dev/) (v0.508+)
 *   **Development Tools**: [ESLint](https://eslint.org/) (v9+), [Prettier](https://prettier.io/)
@@ -79,6 +83,7 @@ Here's how the architecture works:
 *   **Frontend**: The user-facing website is built with React and Vite, with all source code publicly available in this repository.
 *   **Content Management**: Content is managed through a headless CMS backend.
 *   **Data Fetching**: Public content is fetched from the CMS API using TanStack Query for efficient caching and state management.
+*   **Burn Tracker**: Fetches real-time burn data directly from Ethereum via Alchemy/Infura RPCs, with smart caching and ENS resolution.
 
 ---
 
@@ -131,12 +136,18 @@ Follow these steps to set up a local development environment.
     # CMS Configuration
     VITE_SANITY_PROJECT_ID="your_cms_project_id"
     VITE_SANITY_DATASET="production"
+
+    # RPC Providers (for Burn Tracker)
+    VITE_ALCHEMY_API_KEY="your_alchemy_api_key"
+    VITE_INFURA_API_KEY="your_infura_api_key"
     ```
 
     *   `VITE_APP_URL`: The canonical URL of the deployed site (e.g., `https://shi4gud.com`). Used for SEO meta tags.
     *   `VITE_APP_LAUNCH_URL`: The URL that the "Launch App" button links to (typically your dApp).
     *   `VITE_SANITY_PROJECT_ID`: Your Sanity project ID.
     *   `VITE_SANITY_DATASET`: Your Sanity dataset (typically `production` or `development`).
+    *   `VITE_ALCHEMY_API_KEY`: Your Alchemy API key for Ethereum RPC (primary provider).
+    *   `VITE_INFURA_API_KEY`: Your Infura API key for Ethereum RPC (fallback provider).
 
 ### Usage
 
