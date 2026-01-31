@@ -6,6 +6,10 @@ export const ENABLE_PRICE_FETCHING = true;
 export const PRICE_ORACLE_ADDRESS = '0xf86bff1a3ec62175de2c6395214323c566354315' as const;
 export const WETH_USD_CHAINLINK_ADDRESS = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419' as const;
 
+/** Gud Fund (Endaoment) - charity destination for burn bank donations */
+export const GUD_FUND_ADDRESS = '0x287f2611BDbed09037A8fF71C677e0a0309dEa1E' as const;
+export const GUD_FUND_URL = 'https://app.endaoment.org/gud' as const;
+
 export const POOL_ADDRESSES: Record<string, `0x${string}`> = {
   shi: '0x959c7d5706ac0b5a29f506a1019ba7f2a1c70c70',
   shib: '0x2f62f2b4c5fcd7570a709dec05d68ea19c82a9ec',
@@ -22,6 +26,8 @@ export const BURN_BANKS: BurnBank[] = [
     decimals: 18,
     totalSupply: 20000000000000,
     chainId: 1,
+    ktv2Address: '0xB1511DfE756342CA14a858B4896983095fEc1B51',
+    ktv2StartBlock: 24179279,
   },
   {
     id: 'shib',
@@ -37,6 +43,8 @@ export const BURN_BANKS: BurnBank[] = [
     decimals: 18,
     totalSupply: 999982318160301,
     chainId: 1,
+    ktv2Address: '0xE9cAFc8c14C44592aB976F5450D0d40f97668ffc',
+    ktv2StartBlock: 24179342,
   },
 ];
 

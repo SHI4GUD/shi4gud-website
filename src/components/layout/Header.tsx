@@ -39,7 +39,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
   const launchAppUrl = import.meta.env.VITE_APP_LAUNCH_URL || "https://app.shi4gud.com";
 
   const navLinks = [
-    { href: '/burn', text: 'Burns', icon: <Flame className="w-4 h-4" /> },
+    { href: '/bank', text: 'Banks', icon: <Flame className="w-4 h-4" /> },
     { href: '/faq', text: 'FAQ', icon: <MessageCircleQuestion className="w-4 h-4" /> },
     { href: '/how-to', text: 'How It Works', icon: <TvMinimalPlay className="w-4 h-4" /> },
     { href: 'https://docs.shi4gud.com', text: 'Docs', icon: <FileText className="w-4 h-4" /> },
@@ -75,7 +75,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
                 <a 
                   href={link.href} 
                   {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})} 
-                  className={`no-underline font-medium transition-colors duration-300 ease-in-out hover:text-[#ff6b6b] flex items-center gap-2 group ${location.pathname === link.href ? 'text-[#ff6b6b]' : 'text-white'}`}
+                  className={`no-underline font-medium transition-colors duration-300 ease-in-out hover:text-[#ff6b6b] flex items-center gap-2 group ${location.pathname === link.href || location.pathname.startsWith(link.href + '/') ? 'text-[#ff6b6b]' : 'text-white'}`}
                 >
                   {link.icon}
                   {link.text}
@@ -120,7 +120,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
               <a 
                 href={link.href} 
                 {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})} 
-                className={`no-underline font-medium transition-colors duration-300 ease-in-out hover:text-[#ff6b6b] flex items-center gap-2 group ${location.pathname === link.href ? 'text-[#ff6b6b]' : 'text-white'}`}
+                className={`no-underline font-medium transition-colors duration-300 ease-in-out hover:text-[#ff6b6b] flex items-center gap-2 group ${location.pathname === link.href || location.pathname.startsWith(link.href + '/') ? 'text-[#ff6b6b]' : 'text-white'}`}
               >
                 {link.icon}
                 {link.text}

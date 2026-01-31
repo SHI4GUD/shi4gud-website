@@ -2,7 +2,8 @@ import React from 'react';
 import { HomePageData } from '../types/types';
 import { useSanityQuery } from '../hooks/useSanityQuery';
 import Hero from '../components/features/HomePage/Hero';
-import Stats from '../components/features/HomePage/Stats';
+// import Stats from '../components/features/HomePage/Stats';
+import BurnBanksSection from '../components/features/HomePage/BurnBanksSection';
 import Features from '../components/features/HomePage/Features';
 import HowItWorks from '../components/features/HomePage/HowItWorks';
 import CallToAction from '../components/features/HomePage/CallToAction';
@@ -29,7 +30,8 @@ const HomePage: React.FC = () => {
     <div>
       <main>
         <Hero data={homepageData.hero} />
-        <Stats data={homepageData.stats} />
+        {/* <Stats data={homepageData.stats} /> */}
+        <BurnBanksSection />
         <Features data={homepageData.features} />
         <HowItWorks data={homepageData.howItWorks} />
         <CallToAction data={homepageData.callToAction} />

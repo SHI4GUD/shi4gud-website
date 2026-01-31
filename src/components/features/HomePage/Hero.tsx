@@ -12,7 +12,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
   const { 
     title = "Charity Burn Mechanism", 
     subtitle = "Donate. Create Impact.", 
-    body = "Join Shina Inu's revolutionary platform that combines charity with community. Donate to worthy causes, and earn rewards while making a difference.",
+    /* body = "Join Shina Inu's revolutionary platform that combines charity with community. Donate to worthy causes, and earn rewards while making a difference.", */
     ctaButtonText = "Start Donating Now", 
     ctaButtonText2 = "Learn About CBM", 
   } = data || {};
@@ -45,23 +45,24 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
   };
 
   return (
-    <section className="hero text-center relative sm:pt-4 pt-6 pb-[30px] overflow-hidden">
+    <section className="hero relative sm:pt-10 pt-8 pb-16 overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-5 relative z-10">
-        <div className="inline-block">
-          {useWebm ? (
-            <video autoPlay loop muted playsInline poster={shiBurnBankGif} className="w-auto h-50 md:h-70 lg:h-80 xl:h-90 pointer-events-none mix-blend-screen mx-auto xl:-mb-5">
-              <source src={shiBurnBankWebm} type="video/webm" />
-            </video>
-          ) : (
-            <img src={shiBurnBankGif} alt="SHI Burn Bank" className="w-auto h-50 md:h-70 lg:h-80 xl:h-90 pointer-events-none mix-blend-screen mx-auto xl:-mb-5" />
-          )}
-          <h1 className="text-[clamp(2rem,6vw,5rem)] font-extrabold mb-6 xl:mb-8 bg-gradient-to-r from-[#ff6b6b] via-[#ffd93d] to-[#6bcf7f] bg-clip-text text-transparent leading-tight">{renderTitleLines(title)}</h1>
+        <div className="flex flex-col lg:flex-row items-center lg:justify-center gap-8 lg:gap-12 mb-12">
+          <div className="flex-shrink-0">
+            {useWebm ? (
+              <video autoPlay loop muted playsInline poster={shiBurnBankGif} className="w-auto h-50 md:h-70 lg:h-52 xl:h-56 pointer-events-none mix-blend-screen">
+                <source src={shiBurnBankWebm} type="video/webm" />
+              </video>
+            ) : (
+              <img src={shiBurnBankGif} alt="SHI Burn Bank" className="w-auto h-50 md:h-70 lg:h-52 xl:h-56 pointer-events-none mix-blend-screen" />
+            )}
+          </div>
+          <div className="flex flex-col justify-center text-center">
+            <h1 className="text-[clamp(2rem,6vw,5rem)] lg:text-[clamp(1.75rem,4vw,3.25rem)] font-extrabold mb-3 bg-gradient-to-r from-[#ff6b6b] via-[#ffd93d] to-[#6bcf7f] bg-clip-text text-transparent leading-tight">{renderTitleLines(title)}</h1>
+            <p className="text-xl md:text-2xl lg:text-xl opacity-90">{subtitle}</p>
+          </div>
         </div>
-        <p className="text-xl md:text-2xl mb-4 opacity-90 max-w-[800px] mx-auto">{subtitle}</p>
-        <p className="text-md md:text-lg mb-8 xl:mb-10 opacity-80 max-w-[600px] mx-auto leading-relaxed">
-          {body}
-        </p>
-        <div className="flex gap-5 justify-center flex-wrap mb-12 flex-col md:flex-row items-center">
+        <div className="flex gap-5 justify-center flex-wrap flex-col md:flex-row items-center">
           <a href={launchAppUrl} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-4 px-8 rounded-[30px] no-underline text-white font-semibold text-lg transition-all duration-300 ease-in-out border-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(255,107,107,0.4)]">{ctaButtonText}</a>
           <a href="/faq" className="bg-white/10 py-4 px-8 rounded-[30px] no-underline text-white font-semibold text-lg transition-all duration-300 ease-in-out border-2 border-white/20 hover:bg-white/20 hover:-translate-y-1">{ctaButtonText2}</a>
         </div>
