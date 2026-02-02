@@ -28,7 +28,7 @@ export const useKtv2Data = (token: BurnBank | null) => {
 export const useTopStakers = (token: BurnBank | null, limit: number = 10) => {
   return useQuery({
     queryKey: ['topStakers', token?.id, limit],
-    queryFn: () => (token ? fetchTopStakers(token, limit) : Promise.resolve([])),
+    queryFn: () => (token ? fetchTopStakers(token, limit).then((r) => r.topStakers) : Promise.resolve([])),
     enabled: !!token?.ktv2Address,
     staleTime: STAKERS_STALE_TIME,
     gcTime: 60 * 60 * 1000,

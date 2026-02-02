@@ -2,6 +2,7 @@ import { formatEther, formatUnits, parseAbiItem } from 'viem';
 import { getViemClient } from '../config/rpcProvider';
 import { BurnBank, TopStaker, TopDonor, Winner, Ktv2Stats, Ktv2Data } from '../types/types';
 import { resolveEnsName } from './burnDataService';
+import { GETLOGS_CHUNK_SIZES } from '../config/rpcLimits';
 
 // Chainlink ETH/USD price feed
 const WETH_USD_CHAINLINK_ADDRESS = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419' as const;
@@ -171,37 +172,106 @@ export const fetchKtv2Stats = async (token: BurnBank): Promise<Ktv2Stats | null>
   }
 };
 
-// Fetch and aggregate staker data from events
+export interface TopStakersResult {
+  topStakers: TopStaker[];
+  uniqueStakerCount: number;
+}
+
+type LogResult = { args: { user?: string; amount?: bigint }; blockNumber?: bigint };
+
+/** Fetch getLogs in chunks with progressive fallback (10k→2k→500) */
+const getLogsChunked = async (
+  address: `0x${string}`,
+  event: typeof STAKED_EVENT | typeof WITHDREW_EVENT,
+  fromBlock: bigint,
+  toBlock: bigint,
+  chunkSizeIndex: number = 0
+): Promise<LogResult[]> => {
+  const client = getViemClient();
+  const chunkSize = BigInt(GETLOGS_CHUNK_SIZES[chunkSizeIndex] ?? 500);
+  const rangeBlocks = toBlock - fromBlock + 1n;
+
+  if (rangeBlocks <= chunkSize) {
+    try {
+      return await client.getLogs({
+        address,
+        event,
+        fromBlock,
+        toBlock,
+      }) as LogResult[];
+    } catch {
+      if (chunkSizeIndex < GETLOGS_CHUNK_SIZES.length - 1) {
+        const mid = fromBlock + (toBlock - fromBlock) / 2n;
+        const [a, b] = await Promise.all([
+          getLogsChunked(address, event, fromBlock, mid, chunkSizeIndex + 1),
+          getLogsChunked(address, event, mid + 1n, toBlock, chunkSizeIndex + 1),
+        ]);
+        return [...a, ...b];
+      }
+      throw new Error('getLogs failed after chunk retries');
+    }
+  }
+
+  const allLogs: LogResult[] = [];
+  let currentFrom = fromBlock;
+  while (currentFrom <= toBlock) {
+    const currentTo = currentFrom + chunkSize - 1n > toBlock ? toBlock : currentFrom + chunkSize - 1n;
+    const chunkLogs = await getLogsChunked(address, event, currentFrom, currentTo, chunkSizeIndex);
+    allLogs.push(...chunkLogs);
+    currentFrom = currentTo + 1n;
+  }
+  return allLogs;
+};
+
+// Fetch and aggregate staker data from events (counts ALL unique stakers, returns top N)
 export const fetchTopStakers = async (
   token: BurnBank,
   limit: number = 10
-): Promise<TopStaker[]> => {
-  if (!token.ktv2Address || !token.ktv2StartBlock) return [];
+): Promise<TopStakersResult> => {
+  const empty = { topStakers: [], uniqueStakerCount: 0 };
+  if (!token.ktv2Address || !token.ktv2StartBlock) return empty;
   
   // Check cache first
-  const cached = getFromCache<TopStaker[]>(token.id, 'stakers', STAKERS_CACHE_DURATION);
-  if (cached) return cached.data;
+  const cached = getFromCache<TopStakersResult>(token.id, 'stakers', STAKERS_CACHE_DURATION);
+  if (cached && !Array.isArray(cached.data)) return cached.data;
   
   const client = getViemClient();
   const latestBlock = await client.getBlockNumber();
+  const fromBlock = BigInt(token.ktv2StartBlock);
+  
+  let stakedLogs: LogResult[];
+  let withdrewLogs: LogResult[];
   
   try {
-    // Fetch Staked and Withdrew events in parallel
-    const [stakedLogs, withdrewLogs] = await Promise.all([
+    // Try full range first (Alchemy unlimited)
+    [stakedLogs, withdrewLogs] = await Promise.all([
       client.getLogs({
         address: token.ktv2Address,
         event: STAKED_EVENT,
-        fromBlock: BigInt(token.ktv2StartBlock),
+        fromBlock,
         toBlock: latestBlock,
-      }),
+      }) as Promise<LogResult[]>,
       client.getLogs({
         address: token.ktv2Address,
         event: WITHDREW_EVENT,
-        fromBlock: BigInt(token.ktv2StartBlock),
+        fromBlock,
         toBlock: latestBlock,
-      }),
+      }) as Promise<LogResult[]>,
     ]);
-    
+  } catch {
+    // Fallback: chunk with progressive sizes (10k→2k→500)
+    try {
+      [stakedLogs, withdrewLogs] = await Promise.all([
+        getLogsChunked(token.ktv2Address, STAKED_EVENT, fromBlock, latestBlock, 0),
+        getLogsChunked(token.ktv2Address, WITHDREW_EVENT, fromBlock, latestBlock, 0),
+      ]);
+    } catch (error) {
+      console.error('Failed to fetch top stakers:', error);
+      return empty;
+    }
+  }
+  
+  try {
     // Aggregate stakes by address
     const stakeTotals = new Map<string, { amount: bigint; count: number }>();
     
@@ -228,17 +298,19 @@ export const fetchTopStakers = async (
       }
     }
     
-    // Filter out zero/negative balances, sort, and limit
-    const sortedStakers = [...stakeTotals.entries()]
+    // Filter to active stakers (positive balance) - this is ALL unique stakers
+    const activeStakers = [...stakeTotals.entries()]
       .filter(([, data]) => data.amount > 0n)
-      .sort((a, b) => (b[1].amount > a[1].amount ? 1 : -1))
-      .slice(0, limit);
+      .sort((a, b) => (b[1].amount > a[1].amount ? 1 : -1));
     
-    // Resolve ENS names for top stakers
-    const addresses = sortedStakers.map(([addr]) => addr);
+    const uniqueStakerCount = activeStakers.length;
+    const topStakersSlice = activeStakers.slice(0, limit);
+    
+    // Resolve ENS names for top stakers only
+    const addresses = topStakersSlice.map(([addr]) => addr);
     const ensNames = await resolveEnsNames(addresses);
     
-    const topStakers: TopStaker[] = sortedStakers.map(([address, data], index) => ({
+    const topStakers: TopStaker[] = topStakersSlice.map(([address, data], index) => ({
       rank: index + 1,
       address,
       ensName: ensNames.get(address) || undefined,
@@ -246,13 +318,13 @@ export const fetchTopStakers = async (
       stakeCount: data.count,
     }));
     
-    // Cache the results
-    setCache(token.id, 'stakers', topStakers, Number(latestBlock));
+    const result: TopStakersResult = { topStakers, uniqueStakerCount };
+    setCache(token.id, 'stakers', result, Number(latestBlock));
     
-    return topStakers;
+    return result;
   } catch (error) {
     console.error('Failed to fetch top stakers:', error);
-    return [];
+    return empty;
   }
 };
 
@@ -447,7 +519,7 @@ export const fetchAllKtv2Data = async (token: BurnBank): Promise<Ktv2Data | null
   const cachedStats = getFromCache<Ktv2Stats>(token.id, 'stats', STATS_CACHE_DURATION);
   
   // Fetch all data in parallel (including ETH price and contract balance)
-  const [stats, topStakers, topDonors, recentWinners, ethPriceUsd, currentRewardsEth] = await Promise.all([
+  const [stats, stakersResult, topDonors, recentWinners, ethPriceUsd, currentRewardsEth] = await Promise.all([
     cachedStats ? Promise.resolve(cachedStats.data) : fetchKtv2Stats(token),
     fetchTopStakers(token),
     fetchTopDonors(token),
@@ -465,12 +537,13 @@ export const fetchAllKtv2Data = async (token: BurnBank): Promise<Ktv2Data | null
   
   return {
     stats,
-    topStakers,
+    topStakers: stakersResult.topStakers,
     topDonors,
     recentWinners,
     ethPriceUsd,
     currentBlock,
     currentRewardsEth,
+    uniqueStakerCount: stakersResult.uniqueStakerCount,
   };
 };
 

@@ -60,7 +60,6 @@ const AggregatedStats: React.FC = () => {
         }
       }
       if (ktv2Data?.recentWinners) {
-        acc.totalWinners += ktv2Data.recentWinners.length;
         acc.totalRewardsDistributed += ktv2Data.recentWinners.reduce((sum, w) => sum + w.reward, 0);
       }
       if (ktv2Data?.ethPriceUsd && !acc.ethPriceUsd) {
@@ -76,7 +75,6 @@ const AggregatedStats: React.FC = () => {
       totalStakedUsd: 0,
       totalBurnedViaBurnBank: 0,
       totalBurnedViaBurnBankUsd: 0,
-      totalWinners: 0,
       totalRewardsDistributed: 0,
       ethPriceUsd: null as number | null,
     }
@@ -99,60 +97,60 @@ const AggregatedStats: React.FC = () => {
       <div className="bg-white/5 rounded-[20px] p-5 sm:p-7 border border-white/10">
         <div className="flex items-center gap-2 mb-2">
           <Heart className="w-5 h-5 text-red-400" />
-          <p className="text-white/60 text-sm font-medium">Total Donated to Charity</p>
+          <p className="text-white text-sm font-medium">Total Donated to Charity</p>
         </div>
         <p className="text-2xl md:text-3xl font-bold text-red-400">
           {formatEth(totals.totalDonated)}
         </p>
         {totals.ethPriceUsd && (
-          <p className="text-white/50 text-sm">{formatUsd(totals.totalDonated * totals.ethPriceUsd)}</p>
+          <p className="text-white text-sm">{formatUsd(totals.totalDonated * totals.ethPriceUsd)}</p>
         )}
-        <p className="text-white/40 text-sm mt-1">Across all burn banks</p>
+        <p className="text-white/40 text-sm mt-1">Across all Burn Banks</p>
       </div>
 
       {/* Burned via Burn Banks */}
       <div className="bg-white/5 rounded-[20px] p-5 sm:p-7 border border-white/10">
         <div className="flex items-center gap-2 mb-2">
           <Flame className="w-5 h-5 text-orange-400" />
-          <p className="text-white/60 text-sm font-medium">Total Tokens Burned</p>
+          <p className="text-white text-sm font-medium">Total Tokens Burned</p>
         </div>
         <p className="text-2xl md:text-3xl font-bold text-orange-400">
           {formatCompact(totals.totalBurnedViaBurnBank)}
         </p>
         {totals.totalBurnedViaBurnBankUsd > 0 && (
-          <p className="text-white/50 text-sm">{formatUsd(totals.totalBurnedViaBurnBankUsd)}</p>
+          <p className="text-white text-sm">{formatUsd(totals.totalBurnedViaBurnBankUsd)}</p>
         )}
-        <p className="text-white/40 text-sm mt-1">Across all burn banks</p>
+        <p className="text-white/40 text-sm mt-1">Across all Burn Banks</p>
       </div>
 
       {/* Total Staked */}
       <div className="bg-white/5 rounded-[20px] p-6 border border-white/10">
         <div className="flex items-center gap-2 mb-2">
           <Layers className="w-5 h-5 text-purple-400" />
-          <p className="text-white/60 text-sm font-medium">Total Tokens Staked</p>
+          <p className="text-white text-sm font-medium">Total Tokens Staked</p>
         </div>
         <p className="text-2xl md:text-3xl font-bold text-purple-400">
           {formatCompact(totals.totalStaked)}
         </p>
         {totals.totalStakedUsd > 0 && (
-          <p className="text-white/50 text-sm">{formatUsd(totals.totalStakedUsd)}</p>
+          <p className="text-white text-sm">{formatUsd(totals.totalStakedUsd)}</p>
         )}
-        <p className="text-white/40 text-sm mt-1">Across all burn banks</p>
+        <p className="text-white/40 text-sm mt-1">Across all Burn Banks</p>
       </div>
 
       {/* Rewards Distributed */}
       <div className="bg-white/5 rounded-[20px] p-5 sm:p-7 border border-white/10">
         <div className="flex items-center gap-2 mb-2">
           <Gift className="w-5 h-5 text-green-400" />
-          <p className="text-white/60 text-sm font-medium">Rewards Distributed</p>
+          <p className="text-white text-sm font-medium">Rewards Distributed</p>
         </div>
         <p className="text-2xl md:text-3xl font-bold text-green-400">
           {formatEth(totals.totalRewardsDistributed)}
         </p>
         {totals.ethPriceUsd && (
-          <p className="text-white/50 text-sm">{formatUsd(totals.totalRewardsDistributed * totals.ethPriceUsd)}</p>
+          <p className="text-white text-sm">{formatUsd(totals.totalRewardsDistributed * totals.ethPriceUsd)}</p>
         )}
-        <p className="text-white/40 text-sm mt-1">{totals.totalWinners} winners</p>
+        <p className="text-white/40 text-sm mt-1">Across all Burn Banks</p>
       </div>
     </div>
   );
@@ -163,7 +161,7 @@ const BurnBanksSection: React.FC = () => {
     <section className="bg-white/[.02] py-10 sm:py-14 px-4 sm:px-6">
       <div className="max-w-[1200px] mx-auto">
         <h2 className="text-center font-bold mb-10 sm:mb-12 bg-gradient-to-r from-[#ff6b6b] to-[#ffd93d] bg-clip-text text-transparent text-[2rem] md:text-5xl leading-relaxed">
-          Burn Banks Stats
+          Burn Bank Stats
         </h2>
         {/* Aggregated Stats */}
         <AggregatedStats />
@@ -174,7 +172,7 @@ const BurnBanksSection: React.FC = () => {
             to="/bank"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-[rgba(255,107,107,0.1)] to-[rgba(255,142,83,0.1)] border border-[rgba(255,107,107,0.3)] py-3 px-6 rounded-[30px] no-underline text-[#ff6b6b] font-semibold transition-all duration-300 ease-in-out hover:brightness-110 hover:-translate-y-1 cursor-pointer"
           >
-            View burn banks details
+            View Details
             <ArrowRight className="w-5 h-5" />
           </Link>
         </div>

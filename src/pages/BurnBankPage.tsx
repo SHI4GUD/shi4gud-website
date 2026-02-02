@@ -23,7 +23,6 @@ import {
   Gift,
   Heart,
   Layers,
-  Hourglass,
   Trophy,
   Coins,
   LayoutDashboard,
@@ -32,6 +31,7 @@ import { BurnBank, TopStaker, TopDonor, Winner } from '../types/types';
 import { BURN_BANKS, getBurnBankById, getDefaultBurnBank, GUD_FUND_ADDRESS, GUD_FUND_URL } from '../config/burnBanks';
 import { useBurnData, TimeRange } from '../hooks/useBurnData';
 import { useKtv2Data } from '../hooks/useKtv2Data';
+import { useTokenHolderCount } from '../hooks/useTokenHolderCount';
 import { formatCompact, formatEth, formatUsd, formatCountdown } from '../utils/formatters';
 
 type TabId = 'overview' | 'burns' | 'stakers' | 'donors' | 'winners';
@@ -243,6 +243,7 @@ const BurnBankPage: React.FC = () => {
   );
   
   const { data: ktv2Data, isFetching: ktv2Fetching } = useKtv2Data(selectedToken);
+  const { data: holderCount } = useTokenHolderCount(selectedToken);
 
   const tokenOptions = BURN_BANKS.map((token) => ({
     value: token.id,
@@ -272,12 +273,12 @@ const BurnBankPage: React.FC = () => {
     { value: '30d', label: '30D' },
   ];
 
-  const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
-    { id: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { id: 'burns', label: 'Burns', icon: <Flame className="w-4 h-4" /> },
-    { id: 'stakers', label: 'Top Stakers', icon: <Coins className="w-4 h-4" /> },
-    { id: 'donors', label: 'Top Donors', icon: <Gift className="w-4 h-4" /> },
-    { id: 'winners', label: 'Winners', icon: <Trophy className="w-4 h-4" /> },
+  const tabs: { id: TabId; label: string; Icon: typeof LayoutDashboard; color: string }[] = [
+    { id: 'overview', label: 'Overview', Icon: LayoutDashboard, color: 'text-purple-400' },
+    { id: 'burns', label: 'Burns', Icon: Flame, color: 'text-orange-400' },
+    { id: 'stakers', label: 'Top Stakers', Icon: Coins, color: 'text-cyan-400' },
+    { id: 'donors', label: 'Top Donors', Icon: Gift, color: 'text-green-400' },
+    { id: 'winners', label: 'Winners', Icon: Trophy, color: 'text-amber-400' },
   ];
 
   const stats = burnData?.stats;
@@ -370,7 +371,7 @@ const BurnBankPage: React.FC = () => {
                     : 'bg-white/5 text-white/70 hover:bg-white/10 border border-white/10'
                 }`}
               >
-                {tab.icon}
+                <tab.Icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id ? 'text-white' : tab.color}`} />
                 {tab.label}
               </button>
             );
@@ -405,13 +406,13 @@ const BurnBankPage: React.FC = () => {
                         <>
                           <div className="flex items-center gap-2 mb-2">
                             <Gift className="w-5 h-5 text-green-400" />
-                            <p className="text-white/60 text-sm">Current Rewards</p>
+                            <p className="text-white text-sm">Current Rewards</p>
                           </div>
-                          <p className="text-2xl font-bold text-white]">
+                          <p className="text-2xl font-bold text-green-400">
                             {formatEth(ktv2Data.currentRewardsEth)}
                           </p>
                           {ktv2Data.ethPriceUsd && (
-                            <p className="text-white/50 text-sm">
+                            <p className="text-white text-sm">
                               {formatUsd(ktv2Data.currentRewardsEth * ktv2Data.ethPriceUsd)}
                             </p>
                           )}
@@ -431,13 +432,13 @@ const BurnBankPage: React.FC = () => {
                         <>
                           <div className="flex items-center gap-2 mb-2">
                             <Heart className="w-5 h-5 text-red-400" />
-                            <p className="text-white/60 text-sm">Charity</p>
+                            <p className="text-white text-sm">Charity</p>
                           </div>
-                          <p className="text-2xl font-bold text-white">
+                          <p className="text-2xl font-bold text-red-400">
                             {formatEth(ktv2Data.stats.totalGiven)}
                           </p>
                           {ktv2Data.ethPriceUsd && (
-                            <p className="text-white/50 text-sm">
+                            <p className="text-white text-sm">
                               {formatUsd(ktv2Data.stats.totalGiven * ktv2Data.ethPriceUsd)}
                             </p>
                           )}
@@ -457,13 +458,13 @@ const BurnBankPage: React.FC = () => {
                         <>
                           <div className="flex items-center gap-2 mb-2">
                             <Flame className="w-5 h-5 text-orange-400" />
-                            <p className="text-white/60 text-sm">Total Burned (Bank)</p>
+                            <p className="text-white text-sm">Total Burned (Bank)</p>
                           </div>
-                          <p className="text-2xl font-bold text-white">
+                          <p className="text-2xl font-bold text-orange-400">
                             {formatCompact(ktv2Data.stats.totalBurnedViaKtv2)} {selectedToken.symbol}
                           </p>
                           {priceUsd && (
-                            <p className="text-white/50 text-sm">
+                            <p className="text-white text-sm">
                               {formatUsd(ktv2Data.stats.totalBurnedViaKtv2 * priceUsd)}
                             </p>
                           )}
@@ -483,14 +484,22 @@ const BurnBankPage: React.FC = () => {
                         <>
                           <div className="flex items-center gap-2 mb-2">
                             <Layers className="w-5 h-5 text-purple-400" />
-                            <p className="text-white/60 text-sm">Total Staked</p>
+                            <p className="text-white text-sm">Total Staked</p>
                           </div>
-                          <p className="text-2xl font-bold text-white">
+                          <p className="text-2xl font-bold text-purple-400">
                             {formatCompact(ktv2Data.stats.totalStaked)} {selectedToken.symbol}
                           </p>
                           {priceUsd && (
-                            <p className="text-white/50 text-sm">
+                            <p className="text-white text-sm">
                               {formatUsd(ktv2Data.stats.totalStaked * priceUsd)}
+                            </p>
+                          )}
+                          <p className="text-lg font-semibold text-purple-400 mt-2">
+                            {((ktv2Data.stats.totalStaked / selectedToken.totalSupply) * 100).toFixed(4)}% of total supply
+                          </p>
+                          {stats && stats.totalBurned < selectedToken.totalSupply && (
+                            <p className="text-white text-sm mt-0.5">
+                              {((ktv2Data.stats.totalStaked / (selectedToken.totalSupply - stats.totalBurned)) * 100).toFixed(4)}% of circulating (excl. burned)
                             </p>
                           )}
                         </>
@@ -503,20 +512,27 @@ const BurnBankPage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Epoch Interval */}
-                    <div className="bg-white/5 rounded-[20px] p-5 border border-white/10">
-                      {ktv2Data?.stats ? (
+                    {/* Unique Stakers */}
+                    <div className="bg-white/5 rounded-[20px] p-4 sm:p-5 border border-white/10">
+                      {ktv2Data?.uniqueStakerCount !== undefined ? (
                         <>
                           <div className="flex items-center gap-2 mb-2">
-                            <Clock className="w-5 h-5 text-blue-400" />
-                            <p className="text-white/60 text-sm">Epoch Interval</p>
+                            <Coins className="w-5 h-5 text-cyan-400" />
+                            <p className="text-white text-sm">Unique Stakers</p>
                           </div>
-                          <p className="text-2xl font-bold text-white">
-                            {formatCountdown(ktv2Data.stats.epochInterval * 12)}
+                          <p className="text-2xl font-bold text-cyan-400">
+                            {ktv2Data.uniqueStakerCount.toLocaleString()} wallets
                           </p>
-                          <p className="text-white/40 text-sm mt-1">
-                            {ktv2Data.stats.epochInterval.toLocaleString()} blocks
-                          </p>
+                          {holderCount != null && holderCount > 0 && (
+                            <>
+                              <p className="text-lg font-semibold text-white mt-2">
+                                {holderCount.toLocaleString()} total {selectedToken.symbol} holders
+                              </p>
+                              <p className="text-cyan-400/90 text-sm mt-0.5 font-medium">
+                                {((ktv2Data.uniqueStakerCount / holderCount) * 100).toFixed(2)}% of holders staked
+                              </p>
+                            </>
+                          )}
                         </>
                       ) : (
                         <div className="animate-pulse space-y-3">
@@ -527,7 +543,7 @@ const BurnBankPage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Next Epoch */}
+                    {/* Epoch Interval & Next Epoch */}
                     <div className="bg-white/5 rounded-[20px] p-4 sm:p-5 border border-white/10">
                       {ktv2Data?.stats && ktv2Data.currentBlock !== undefined ? (
                         (() => {
@@ -542,18 +558,37 @@ const BurnBankPage: React.FC = () => {
                           return (
                             <>
                               <div className="flex items-center gap-2 mb-2">
-                                <Hourglass className="w-5 h-5 text-yellow-400" />
-                                <p className="text-white/60 text-sm">Next Epoch</p>
+                                <Clock className="w-5 h-5 text-yellow-400" />
+                                <p className="text-white text-sm">Epoch</p>
                               </div>
-                              <p className="text-2xl font-bold text-white">
-                                {formatCountdown(secondsUntilNext)}
+                              <p className="text-2xl font-bold text-yellow-400">
+                                {formatCountdown(ktv2Data.stats.epochInterval * 12)} interval
                               </p>
-                              <p className="text-white/40 text-sm mt-1">
+                              <p className="text-white text-sm mt-1">
+                                {ktv2Data.stats.epochInterval.toLocaleString()} blocks
+                              </p>
+                              <p className="text-xl font-bold text-yellow-400 mt-3">
+                                {formatCountdown(secondsUntilNext)} to next
+                              </p>
+                              <p className="text-white text-sm mt-0.5">
                                 Block {nextEpochBlock.toLocaleString()}
                               </p>
                             </>
                           );
                         })()
+                      ) : ktv2Data?.stats ? (
+                        <>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="w-5 h-5 text-yellow-400" />
+                            <p className="text-white text-sm">Epoch Interval</p>
+                          </div>
+                          <p className="text-2xl font-bold text-yellow-400">
+                            {formatCountdown(ktv2Data.stats.epochInterval * 12)}
+                          </p>
+                          <p className="text-white text-sm mt-1">
+                            {ktv2Data.stats.epochInterval.toLocaleString()} blocks
+                          </p>
+                        </>
                       ) : (
                         <div className="animate-pulse space-y-3">
                           <div className="h-4 w-28 bg-white/10 rounded" />
@@ -665,18 +700,18 @@ const BurnBankPage: React.FC = () => {
                       <>
                         <div className="flex items-center gap-2 mb-2">
                           <Flame className="w-5 h-5 text-[#ff6b6b]" />
-                          <p className="text-white/60 text-sm">Total Burned (All Time)</p>
+                          <p className="text-white text-sm">Total Burned (All Time)</p>
                         </div>
                         <p className="text-2xl font-bold text-[#ff6b6b]">
                           {formatCompact(stats.totalBurned)}
                         </p>
-                        <p className="text-white/40 text-sm mt-1">{burnPercentage}% of supply</p>
+                        <p className="text-white text-sm mt-1">{burnPercentage}% of supply</p>
                         {totalBurnedUsd && (
-                          <p className="text-white/50 text-sm">{formatUsd(totalBurnedUsd)}</p>
+                          <p className="text-white text-sm">{formatUsd(totalBurnedUsd)}</p>
                         )}
                         {hasKtv2 && ktv2Data?.stats && (
                           <div className="mt-3 pt-3 border-t border-white/10">
-                            <p className="text-white/50 text-xs mb-1">Via Burn Bank</p>
+                            <p className="text-white text-xs mb-1">Via Burn Bank</p>
                             <p className="text-[#ff6b6b] font-semibold">
                               {formatCompact(ktv2Data.stats.totalBurnedViaKtv2)}
                             </p>
@@ -699,13 +734,13 @@ const BurnBankPage: React.FC = () => {
                       <>
                         <div className="flex items-center gap-2 mb-2">
                           <Clock className="w-5 h-5 text-[#ff6b6b]" />
-                          <p className="text-white/60 text-sm">Burned Today</p>
+                          <p className="text-white text-sm">Burned Today</p>
                         </div>
                         <p className="text-2xl font-bold text-[#ff6b6b]">
                           {formatCompact(stats.burnedToday)}
                         </p>
                         {burnedTodayUsd !== null && burnedTodayUsd > 0 && (
-                          <p className="text-white/50 text-sm">{formatUsd(burnedTodayUsd)}</p>
+                          <p className="text-white text-sm">{formatUsd(burnedTodayUsd)}</p>
                         )}
                         {stats.burnRateChange !== undefined && (
                           <p className={`text-sm mt-1 flex items-center gap-1 ${stats.burnRateChange > 0 ? 'text-[#6bcf7f]' : stats.burnRateChange < 0 ? 'text-red-400' : 'text-white/50'}`}>
@@ -730,15 +765,15 @@ const BurnBankPage: React.FC = () => {
                       <>
                         <div className="flex items-center gap-2 mb-2">
                           <Zap className="w-5 h-5 text-[#ff6b6b]" />
-                          <p className="text-white/60 text-sm">Burned (7D)</p>
+                          <p className="text-white text-sm">Burned (7D)</p>
                         </div>
                         <p className="text-2xl font-bold text-[#ff6b6b]">
                           {formatCompact(stats.burned7d)}
                         </p>
                         {burned7dUsd !== null && burned7dUsd > 0 && (
-                          <p className="text-white/50 text-sm">{formatUsd(burned7dUsd)}</p>
+                          <p className="text-white text-sm">{formatUsd(burned7dUsd)}</p>
                         )}
-                        <p className="text-white/40 text-sm mt-1">
+                        <p className="text-white text-sm mt-1">
                           ~{formatCompact(avgDailyBurn)}/day
                           {avgDailyBurnUsd !== null && avgDailyBurnUsd > 0 && (
                             <span> ({formatUsd(avgDailyBurnUsd)})</span>
@@ -761,7 +796,7 @@ const BurnBankPage: React.FC = () => {
                       <>
                         <div className="flex items-center gap-2 mb-2">
                           <TrendingUp className="w-5 h-5 text-[#ff6b6b]" />
-                          <p className="text-white/60 text-sm">Burn Progress</p>
+                          <p className="text-white text-sm">Burn Progress</p>
                         </div>
                         <p className="text-2xl font-bold text-[#ff6b6b]">{burnPercentage}%</p>
                         <div className="mt-2 h-2 bg-white/10 rounded-full overflow-hidden">
@@ -986,7 +1021,7 @@ const BurnBankPage: React.FC = () => {
                               {formatCompact(staker.stakedAmount)} {selectedToken.symbol}
                             </p>
                             {usdValue && (
-                              <p className="text-white/40 text-xs">{formatUsd(usdValue)}</p>
+                              <p className="text-white text-xs">{formatUsd(usdValue)}</p>
                             )}
                           </div>
                         </div>
@@ -1074,7 +1109,7 @@ const BurnBankPage: React.FC = () => {
                               {formatEth(donor.totalGiven)}
                             </p>
                             {donorUsdValue && (
-                              <p className="text-white/40 text-xs">{formatUsd(donorUsdValue)}</p>
+                              <p className="text-white text-xs">{formatUsd(donorUsdValue)}</p>
                             )}
                           </div>
                         </div>
@@ -1158,7 +1193,7 @@ const BurnBankPage: React.FC = () => {
                           <div className="text-right flex-shrink-0 md:col-span-1">
                             <p className="text-[#ff8e53] font-medium text-sm sm:text-base">{formatEth(winner.reward)}</p>
                             {rewardUsdValue && (
-                              <p className="text-white/40 text-xs">{formatUsd(rewardUsdValue)}</p>
+                              <p className="text-white text-xs">{formatUsd(rewardUsdValue)}</p>
                             )}
                           </div>
                         </div>

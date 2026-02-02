@@ -8,6 +8,7 @@ import {
   ENABLE_TRANSACTION_FETCHING,
   ENABLE_PRICE_FETCHING,
 } from '../config/burnBanks';
+import { GETLOGS_CHUNK_SIZES } from '../config/rpcLimits';
 
 const ERC20_ABI = [
   {
@@ -126,31 +127,30 @@ const fetchBurnLogs = async (
   return allLogs;
 };
 
-const fetchBurnLogsChunked = async (
+/** Fetch logs for a block range; retries with smaller chunks (10k→2k→500) on failure */
+const fetchBurnLogsForRange = async (
   token: BurnBank,
-  latestBlock: bigint,
-  fromBlock: bigint
+  fromBlock: bigint,
+  toBlock: bigint,
+  chunkSizeIndex: number = 0
 ): Promise<Array<{ blockNumber: bigint; value: bigint; from: string; txHash: string }>> => {
   const client = getViemClient();
-  const chunkSize = 500n;
-  const allLogs: Array<{ blockNumber: bigint; value: bigint; from: string; txHash: string }> = [];
-  let currentFrom = fromBlock;
-  
-  while (currentFrom < latestBlock) {
-    const currentTo = currentFrom + chunkSize > latestBlock ? latestBlock : currentFrom + chunkSize;
-    
+  const chunkSize = BigInt(GETLOGS_CHUNK_SIZES[chunkSizeIndex] ?? 500);
+  const rangeBlocks = toBlock - fromBlock + 1n;
+
+  if (rangeBlocks <= chunkSize) {
+    const allLogs: Array<{ blockNumber: bigint; value: bigint; from: string; txHash: string }> = [];
+    let failed = false;
     for (const burnAddress of token.burnAddresses) {
       try {
         await delay(REQUEST_DELAY);
-        
         const logs = await client.getLogs({
           address: token.contractAddress,
           event: TRANSFER_EVENT,
           args: { to: burnAddress },
-          fromBlock: currentFrom,
-          toBlock: currentTo,
+          fromBlock,
+          toBlock,
         });
-        
         for (const log of logs) {
           allLogs.push({
             blockNumber: log.blockNumber!,
@@ -160,14 +160,38 @@ const fetchBurnLogsChunked = async (
           });
         }
       } catch {
-        // Skip failed chunk
+        failed = true;
+        break;
       }
     }
-    
+    if (failed && chunkSizeIndex < GETLOGS_CHUNK_SIZES.length - 1) {
+      const mid = fromBlock + (toBlock - fromBlock) / 2n;
+      const [a, b] = await Promise.all([
+        fetchBurnLogsForRange(token, fromBlock, mid, chunkSizeIndex + 1),
+        fetchBurnLogsForRange(token, mid + 1n, toBlock, chunkSizeIndex + 1),
+      ]);
+      return [...a, ...b];
+    }
+    return allLogs;
+  }
+
+  const allLogs: Array<{ blockNumber: bigint; value: bigint; from: string; txHash: string }> = [];
+  let currentFrom = fromBlock;
+  while (currentFrom <= toBlock) {
+    const currentTo = currentFrom + chunkSize - 1n > toBlock ? toBlock : currentFrom + chunkSize - 1n;
+    const chunkLogs = await fetchBurnLogsForRange(token, currentFrom, currentTo, chunkSizeIndex);
+    allLogs.push(...chunkLogs);
     currentFrom = currentTo + 1n;
   }
-  
   return allLogs;
+};
+
+const fetchBurnLogsChunked = async (
+  token: BurnBank,
+  latestBlock: bigint,
+  fromBlock: bigint
+): Promise<Array<{ blockNumber: bigint; value: bigint; from: string; txHash: string }>> => {
+  return fetchBurnLogsForRange(token, fromBlock, latestBlock, 0);
 };
 
 const aggregateBurnsByDay = (

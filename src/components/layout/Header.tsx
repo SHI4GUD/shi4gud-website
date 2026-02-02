@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef } from 'react';
-import { Menu, X, Globe, Calculator, MessageCircleQuestion, TvMinimalPlay, FileText, Flame } from 'lucide-react';
+import { Menu, X, Globe, Calculator, MessageCircleQuestion, TvMinimalPlay, FileText, Flame, ListPlus } from 'lucide-react';
 import { useLocation, Link } from 'react-router-dom';
 import logo from '/assets/logos/shi4gud-light.svg';
 
@@ -37,11 +37,13 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
   }, []);
 
   const launchAppUrl = import.meta.env.VITE_APP_LAUNCH_URL || "https://app.shi4gud.com";
+  const listingEnabled = import.meta.env.VITE_LISTING_ENABLED === 'true';
 
   const navLinks = [
     { href: '/bank', text: 'Banks', icon: <Flame className="w-4 h-4" /> },
     { href: '/faq', text: 'FAQ', icon: <MessageCircleQuestion className="w-4 h-4" /> },
-    { href: '/how-to', text: 'How It Works', icon: <TvMinimalPlay className="w-4 h-4" /> },
+    { href: '/how-to', text: 'How To', icon: <TvMinimalPlay className="w-4 h-4" /> },
+    ...(listingEnabled ? [{ href: '/listing', text: 'Listing', icon: <ListPlus className="w-4 h-4" /> }] : []),
     { href: 'https://docs.shi4gud.com', text: 'Docs', icon: <FileText className="w-4 h-4" /> },
     { href: 'https://shinatoken.com', text: '$SHI', icon: <Globe className="w-4 h-4" /> },
     { href: 'https://shinatools.com', text: 'Tools', icon: <Calculator className="w-4 h-4" /> },
