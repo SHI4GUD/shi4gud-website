@@ -97,7 +97,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
               </a>
             ))}
           </div>
-          <a href={launchAppUrl} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-3 px-6 rounded-[25px] no-underline text-white font-semibold transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,107,107,0.3)]">Launch App</a>
+          <a href={launchAppUrl} rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-3 px-6 rounded-[25px] no-underline text-white font-semibold transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,107,107,0.3)]">Launch App</a>
         </div>
 
         {/* Mobile Controls */}
@@ -141,7 +141,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
               </a>
             ))}
           </div>
-          <li><a href={launchAppUrl} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-3 px-6 rounded-[25px] no-underline text-white font-semibold transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,107,107,0.3)]">Launch App</a></li>
+          <li><a href={launchAppUrl} rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-3 px-6 rounded-[25px] no-underline text-white font-semibold transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_10px_25px_rgba(255,107,107,0.3)]">Launch App</a></li>
         </ul>
       </div>
     </header>

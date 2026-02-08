@@ -63,7 +63,7 @@ const Hero: React.FC<HeroProps> = ({ data }) => {
           </div>
         </div>
         <div className="flex gap-5 justify-center flex-wrap flex-col md:flex-row items-center">
-          <a href={launchAppUrl} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-4 px-8 rounded-[30px] no-underline text-white font-semibold text-lg transition-all duration-300 ease-in-out border-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(255,107,107,0.4)]">{ctaButtonText}</a>
+          <a href={launchAppUrl} rel="noopener noreferrer" className="bg-gradient-to-r from-[#ff6b6b] to-[#ff8e53] py-4 px-8 rounded-[30px] no-underline text-white font-semibold text-lg transition-all duration-300 ease-in-out border-none cursor-pointer hover:-translate-y-1 hover:shadow-[0_15px_35px_rgba(255,107,107,0.4)]">{ctaButtonText}</a>
           <a href="/faq" className="bg-white/10 py-4 px-8 rounded-[30px] no-underline text-white font-semibold text-lg transition-all duration-300 ease-in-out border-2 border-white/20 hover:bg-white/20 hover:-translate-y-1">{ctaButtonText2}</a>
         </div>
       </div>
