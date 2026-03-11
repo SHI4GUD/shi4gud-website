@@ -42,7 +42,7 @@ const Header = forwardRef<HTMLElement, HeaderProps>(({ isSticky }, ref) => {
   const navLinks = [
     { href: '/bank', text: 'Banks', icon: <Flame className="w-4 h-4" /> },
     { href: '/faq', text: 'FAQ', icon: <MessageCircleQuestion className="w-4 h-4" /> },
-    { href: '/how-to', text: 'How To', icon: <TvMinimalPlay className="w-4 h-4" /> },
+    { href: '/videos', text: 'Videos', icon: <TvMinimalPlay className="w-4 h-4" /> },
     ...(listingEnabled ? [{ href: '/listing', text: 'Listing', icon: <ListPlus className="w-4 h-4" /> }] : []),
     { href: 'https://docs.shi4gud.com', text: 'Docs', icon: <FileText className="w-4 h-4" /> },
     { href: 'https://shinatoken.com', text: '$SHI', icon: <Globe className="w-4 h-4" /> },
