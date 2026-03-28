@@ -8,6 +8,7 @@ import Features from '../components/features/HomePage/Features';
 import HowItWorks from '../components/features/HomePage/HowItWorks';
 import CallToAction from '../components/features/HomePage/CallToAction';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import GrantsMadeSection from '../components/features/HomePage/GrantsMadeSection';
 
 const homepageQuery = `*[_type == "homepage"][0]`;
 
@@ -31,6 +32,7 @@ const HomePage: React.FC = () => {
       <main>
         <Hero data={homepageData.hero} />
         {/* <Stats data={homepageData.stats} /> */}
+        <GrantsMadeSection />
         <BurnBanksSection />
         <Features data={homepageData.features} />
         <HowItWorks data={homepageData.howItWorks} />

@@ -9,7 +9,7 @@ const Features: React.FC<FeaturesProps> = ({ data }) => {
   const { title, subtitle, featureList = [] } = data || {};
 
   return (
-    <section className="py-[60px]" id="features">
+    <section className="bg-white/[.02] py-[60px]" id="features">
       <div className="max-w-[1200px] mx-auto px-5">
         <h2 className="text-center font-bold mb-5 bg-gradient-to-r from-[#ff6b6b] to-[#ffd93d] bg-clip-text text-transparent text-[2rem] md:text-5xl leading-relaxed">{title}</h2>
         {subtitle && <p className="text-center text-lg md:text-xl mb-[60px] opacity-80 max-w-3xl mx-auto">{subtitle}</p>}

@@ -9,7 +9,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({ data }) => {
   const { title, steps = [] } = data || {};
 
   return (
-    <section className="bg-white/[.02] py-[60px] md:py-[100px]" id="how-it-works">
+    <section className="py-[60px] md:py-[100px]" id="how-it-works">
       <div className="max-w-[1200px] mx-auto px-5">
         <h2 className="text-center font-bold mb-[60px] bg-gradient-to-r from-[#ff6b6b] to-[#ffd93d] bg-clip-text text-transparent text-[2rem] md:text-5xl leading-relaxed">{title}</h2>
         <div className="flex flex-wrap justify-center gap-10 mt-[60px]">

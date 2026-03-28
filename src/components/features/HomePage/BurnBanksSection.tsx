@@ -158,7 +158,7 @@ const AggregatedStats: React.FC = () => {
 
 const BurnBanksSection: React.FC = () => {
   return (
-    <section className="bg-white/[.02] py-10 sm:py-14 px-4 sm:px-6">
+    <section className="py-10 sm:py-14 px-4 sm:px-6">
       <div className="max-w-[1200px] mx-auto">
         <h2 className="text-center font-bold mb-10 sm:mb-12 bg-gradient-to-r from-[#ff6b6b] to-[#ffd93d] bg-clip-text text-transparent text-[2rem] md:text-5xl leading-relaxed">
           Burn Bank Stats
