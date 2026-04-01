@@ -211,7 +211,7 @@ const GrantsMadeSection: React.FC = () => {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-[rgba(255,107,107,0.1)] to-[rgba(255,142,83,0.1)] border border-[rgba(255,107,107,0.3)] py-2 px-5 rounded-[30px] text-[#ff6b6b] text-sm font-semibold transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5"
           >
-            View Gud Fund on Endaoment
+            Visit the Gud Fund on Endaoment
             <ExternalLink className="w-4 h-4" />
           </a>
         </div>
